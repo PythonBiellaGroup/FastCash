@@ -1,0 +1,2 @@
+# FastCash
+FastCash FastAPI Project
