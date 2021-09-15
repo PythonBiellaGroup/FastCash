@@ -57,7 +57,7 @@ The content of the file is this one (paste inside the file).
         "type": "python",
         "request": "launch",
         "module": "uvicorn",
-        "args": ["main:app", "--reload", "--port", "8000"],
+        "args": ["main:api", "--reload", "--port", "8000"],
         "env": {
             "PYTHONPATH": "${cwd}",
             "API_ENDPOINT_PORT": "8000",
