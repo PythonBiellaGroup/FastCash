@@ -27,7 +27,7 @@ def default():
 
 
 @api.get("/api/test/{x}")
-def calcola(x: int, y: int = 50, z: Optional[int] = None):
+def calcola(x: int, y: int = 50, z: int = None):
     if z == 0 or z is None:
         return fastapi.responses.JSONResponse(content={"Errore": "Z non è valorizzato"}, status_code=400)
     somma = x + y
