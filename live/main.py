@@ -36,7 +36,7 @@ def calcola(x: int, y: int = 50, z: Optional[int] = None):
 
 
 if __name__ == "__main__":
-    port = os.environ.get('API_ENDPOINT_PORT', '8000')
+    port = int(os.environ.get('API_ENDPOINT_PORT', '8000'))
     host = os.environ.get('API_ENDPOINT_HOST', '127.0.0.1')
 
     uvicorn.run('main:api', port=port, host=host, reload=True)
