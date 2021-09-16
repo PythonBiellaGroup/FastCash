@@ -56,11 +56,11 @@ The content of the file is this one (paste inside the file).
         "name": "FastAPI",
         "type": "python",
         "request": "launch",
-        "module": "uvicorn",
-        "args": ["main:api", "--reload", "--port", "8000"],
+        "module": "main",
         "env": {
-            "PYTHONPATH": "${cwd}",
+            "PYTHONPATH": "${cwd}/live",
             "API_ENDPOINT_PORT": "8000",
+            "API_ENDPOINT_HOST": "127.0.0.1",
             "VERBOSITY": "DEBUG"
         }
       }
