@@ -1,3 +1,4 @@
+import os
 import fastapi
 import uvicorn
 from typing import Optional
@@ -14,7 +15,6 @@ def index():
         "</body>"
         "</html>"
     )
-    # return {"message": body}
     return fastapi.responses.HTMLResponse(content=body)
 
 
@@ -27,7 +27,7 @@ def default():
 
 
 @api.get("/api/test/{x}")
-def calcola(x: int, y: int = 50, z: Optional[int] = None):
+def calcola(x: int, y: int = 50, z: int = None):
     if z == 0 or z is None:
         return fastapi.responses.JSONResponse(content={"Errore": "Z non è valorizzato"}, status_code=400)
     somma = x + y
@@ -36,4 +36,7 @@ def calcola(x: int, y: int = 50, z: Optional[int] = None):
 
 
 if __name__ == "__main__":
-    uvicorn.run(api, port="8000", host="127.0.0.1")
+    port = int(os.environ.get('API_ENDPOINT_PORT', '8000'))
+    host = os.environ.get('API_ENDPOINT_HOST', '127.0.0.1')
+
+    uvicorn.run('main:api', port=port, host=host, reload=True)
