@@ -6,7 +6,7 @@ services:
       context: ../
     restart: always
     environment:
-      EMAIL: "info@vanlog.it"
+      EMAIL: "pythonbiellagroup@gmail.com"
       DEBUG_MODE: "False"
       VERBOSITY: "info"
     volumes:

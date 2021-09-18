@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM python:3.8-slim-buster
 
 # Metadata
 LABEL name="FastCash"
@@ -7,20 +7,12 @@ LABEL version="0.1"
 
 ARG YOUR_ENV="venv"
 
-# Install Python
-RUN apt-get update && apt-get install -y python3.8 python3-pip
-
-# Install Git
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y git
-
 # Install poetry dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt update && apt install -y libpq-dev gcc curl
 
 ##########################
 # Project Python definition
-WORKDIR /moxoff
+WORKDIR /admin-app
 
 # Install Python libraries
 ENV YOUR_ENV=${YOUR_ENV} \
@@ -29,7 +21,7 @@ ENV YOUR_ENV=${YOUR_ENV} \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    POETRY_VERSION=1.1.6 \
+    POETRY_VERSION=1.1.8 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
     POETRY_HOME="/opt/poetry" \
@@ -38,7 +30,11 @@ ENV YOUR_ENV=${YOUR_ENV} \
 
 
 #Copy all the project files
-COPY . .
+COPY pyproject.toml .
+COPY poetry.lock .
+COPY /app ./app
+COPY .env .
+COPY launch.sh .
 
 # Install project libraries
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
@@ -47,10 +43,12 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 RUN pip install "poetry==$POETRY_VERSION"
 
 # Install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
-RUN poetry config virtualenvs.path $VENV_PATH
-RUN poetry config virtualenvs.create true
+RUN poetry config virtualenvs.create false
 RUN poetry config virtualenvs.in-project false
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
 
 #Launch the main (if required)
+RUN chmod +x launch.sh
+CMD ["bash", "launch.sh"]
+#CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${APP_ENDPOINT_PORT:-8045}", "app.main:app"]
