@@ -3,7 +3,7 @@ services:
   fastcash-backend:
     #image: registry.gitlab.com/moxoff/zanichelli/ingegnerizzazione/zanichelli-ingegnerizzazione-api/zanichelli-api:develop
     build:
-      dockerfile: ./Dockerfiles/app
+      dockerfile: ./Dockerfiles/app.dockefile
       context: .
     container_name: fastcash-backend
     env_file:
@@ -27,7 +27,7 @@ services:
   
   fastcash-db:
     build: 
-      dockerfile: ./Dockerfiles/db
+      dockerfile: ./Dockerfiles/db.dockerfile
       context: .
     container_name: fastcash-db
     env_file:

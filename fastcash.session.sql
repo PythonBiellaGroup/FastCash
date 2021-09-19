@@ -1,9 +1,11 @@
--- drop table producttaglink cascade;
--- drop table product cascade;
--- drop table tag cascade;
--- drop table producttype cascade;
-select *
-from product;
+drop table producttaglink cascade;
+drop table product cascade;
+drop table tag cascade;
+drop table producttype cascade;
+-- select *
+-- from product;
+-- select *
+-- from product;
 -- select *
 -- from producttaglink
 --     inner join product on product.id = producttaglink.product_id
