@@ -30,6 +30,8 @@ services:
       dockerfile: ./Dockerfiles/db
       context: .
     container_name: fastcash-db
+    env_file:
+      - .env
     #image: postgres:13.2
     environment:
       POSTGRES_DB: ${APP_DB_NAME}
