@@ -20,10 +20,6 @@ def read_all_products(
     """
     Retrieve items.
     """
-    # define the session
-    # engine = get_db()
-    # session = get_session()
-    # with Session(engine) as session:
     products = session.exec(select(Product).offset(offset).limit(limit)).all()
     return products
 

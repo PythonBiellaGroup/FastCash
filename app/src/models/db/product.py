@@ -14,9 +14,8 @@ class Product(ProductBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(sa_column=Column("name", String, unique=True))
     # foreign key = table name
-    type_id: Optional[int] = Field(default=None, foreign_key="producttype.id")
+    
     product_type: Optional["ProductType"] = Relationship(back_populates="products")
-
     tags: List["Tag"] = Relationship(
         back_populates="products", link_model=ProductTagLink
     )

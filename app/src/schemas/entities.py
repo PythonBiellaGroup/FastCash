@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlmodel import SQLModel
+from typing import Optional
+from sqlmodel import SQLModel, Field
 
 
 class AppUserBase(SQLModel):
@@ -14,6 +15,7 @@ class ProductBase(SQLModel):
     description: str
     price: float
     available: bool
+    type_id: Optional[int] = Field(default=None, foreign_key="producttype.id")
 
 
 class ProductTypeBase(SQLModel):

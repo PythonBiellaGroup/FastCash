@@ -1,5 +1,9 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from app.src.schemas.entities import ProductBase
+
+
+if TYPE_CHECKING:
+    from app.src.models.api.product_type import ProductTypeRead
 
 
 class ProductRead(ProductBase):
@@ -8,6 +12,7 @@ class ProductRead(ProductBase):
     description: str
     price: float
     available: bool
+    type_id: Optional[int] = None
 
 
 class ProductCreate(ProductBase):
@@ -15,6 +20,7 @@ class ProductCreate(ProductBase):
     description: str
     price: float
     available: bool
+    type_id: Optional[int] = None
 
 
 class ProductUpdate(ProductBase):
@@ -22,7 +28,12 @@ class ProductUpdate(ProductBase):
     description: Optional[str] = None
     price: Optional[float] = None
     available: Optional[bool] = None
+    type_id: Optional[int] = None
 
 
 class ProductDelete(ProductBase):
     pass
+
+
+class ProductReadwithType(ProductRead):
+    product_type: Optional["ProductTypeRead"] = None
