@@ -1,5 +1,6 @@
 # database manager functions to interact with database
 from sqlmodel import Session
+from typing import Generator
 from sqlmodel.main import SQLModel
 
 from app.src.db.engine import get_db
@@ -7,11 +8,10 @@ from app.src.logger import logger
 
 
 # get engine sqlalchemy session
-def get_session():
+def get_session() -> Generator:
     engine = get_db()
-    # Session = sessionmaker(engine)
-    session = Session(engine)
-    return session
+    with Session(engine) as session:
+        yield session
 
 
 # create table

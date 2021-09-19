@@ -51,4 +51,3 @@ RUN poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-int
 #Launch the main (if required)
 RUN chmod +x launch.sh
 CMD ["bash", "launch.sh"]
-#CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${APP_ENDPOINT_PORT:-8045}", "app.main:app"]

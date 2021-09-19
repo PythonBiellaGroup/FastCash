@@ -57,10 +57,10 @@ The content of the file is this one (paste inside the file).
         "type": "python",
         "request": "launch",
         "module": "uvicorn",
-        "args": ["app.main:app", "--reload", "--port", "8000"],
+        "args": ["app.main:app", "--reload", "--port", "8042"],
         "env": {
             "PYTHONPATH": "${cwd}",
-            "API_ENDPOINT_PORT": "8000",
+            "API_ENDPOINT_PORT": "8042",
             "VERBOSITY": "DEBUG"
         }
       }
@@ -90,12 +90,6 @@ Substitute `<path of your local virtualenv>` with the path copied from `poetry s
 
 After this reload vscode and every time you open a new windows vscode automatically activate the venv created with poetry for you.
 
-### Configure the linter with Python
-
-
-### Configure the automatic save with Python
-
-
 ### Usefull dev extensions
 - Python (with Pylance):
 - Jupyter:
@@ -110,8 +104,9 @@ After this reload vscode and every time you open a new windows vscode automatica
 - indent-rainbow: 
 - Prettier - Code formatter
 
+### Other informations about vscode or python configurations
 
-
+If you want to have other informations please check our website (English and Italian only): https://pythonbiellagroup.it
 
 ## Launch and debug (development mode)
 
@@ -133,8 +128,15 @@ If you experience some changes to the pyproject.toml file, you can update your l
 
 If you want you can use also the shell script: `launch-debug.sh` to test the project in debug mode with Flask and without gunicorn
 
-## Test the project
+## Documentation
 
+If you want to see the official documentation of the project you can check it here:
+   - http://localhost:8042/docs
+   - http://localhost:8042/redoc
+
+The OpenAPI documentation is created automatically by FastAPI.
+
+Please consider that the port and the host can be changed based on your personal project configuration.
 
 ## Launch in production mode
 
