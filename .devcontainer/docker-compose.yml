@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  admin_app_dev:
+  pbg-dev:
     build:
       dockerfile: ./Dockerfiles/dev.dockerfile
       context: ../
@@ -10,5 +10,5 @@ services:
       DEBUG_MODE: "False"
       VERBOSITY: "info"
     volumes:
-      - .:/workspace:cached
+      - ..:/workspace:cached
     command: /bin/sh -c "while sleep 1000; do :; done"
