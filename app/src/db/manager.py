@@ -1,5 +1,4 @@
 # database manager functions to interact with database
-from sqlalchemy.orm.session import sessionmaker
 from sqlmodel import Session
 from sqlmodel.main import SQLModel
 
