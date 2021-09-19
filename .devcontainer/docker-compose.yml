@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  pbg-dev:
+  admin_app_dev:
     build:
       dockerfile: ./Dockerfiles/dev.dockerfile
       context: ../
