@@ -489,3 +489,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# data and backup folders used by db
+data/
+backup/
