@@ -2,12 +2,16 @@
 from sqlmodel import create_engine
 from sqlalchemy import engine
 
+from pyramid.config import Configurator
+
 from app.src.config import DB_CONFIG
 from app.src.logger import logger
 
 
 def get_db():
     try:
+        config = Configurator()
+        config.scan('..models')
         engine = get_engine()
         logger.info("Connected to PostgreSQL database!")
     except IOError:

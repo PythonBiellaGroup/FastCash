@@ -31,7 +31,7 @@ ENV YOUR_ENV=${YOUR_ENV} \
 
 #Copy all the project files
 COPY pyproject.toml .
-COPY poetry.lock .
+#COPY poetry.lock .
 COPY /app ./app
 COPY .env .
 COPY launch.sh .
