@@ -24,6 +24,19 @@ def read_all_products(
     return products
 
 
+# @router.get("/products/", response_model=List[ProductReadwithType])
+# def read_all_products_type(
+#     session: Session = Depends(get_session),
+#     offset: int = 0,
+#     limit: int = Query(default=100, lte=100),
+# ) -> Any:
+#     """
+#     Retrieve items.
+#     """
+#     products = session.exec(select(Product).offset(offset).limit(limit)).all()
+#     return products
+
+
 @router.post("/", response_model=ProductRead)
 def create_product(product: ProductCreate) -> Any:
     engine = get_db()
@@ -35,14 +48,14 @@ def create_product(product: ProductCreate) -> Any:
         return db_product
 
 
-@router.get("/{name}", response_model=ProductRead)
-def read_product_name(product_name: str) -> Any:
-    engine = get_db()
-    with Session(engine) as session:
-        product = session.get(Product, product_name)
-        if not product:
-            raise HTTPException(status_code=404, detail="Item not found")
-        return product
+# @router.get("/{name}", response_model=ProductRead)
+# def read_product_name(product_name: str) -> Any:
+#     engine = get_db()
+#     with Session(engine) as session:
+#         product = session.get(Product, product_name)
+#         if not product:
+#             raise HTTPException(status_code=404, detail="Item not found")
+#         return product
 
 
 @router.patch("/{product_id}", response_model=ProductRead)
