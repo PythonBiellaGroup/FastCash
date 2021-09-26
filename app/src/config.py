@@ -3,8 +3,8 @@ import os
 from typing import List
 from pydantic import AnyHttpUrl
 
-from app.src.common.utils import read_yaml, get_folder_path
-from app.src.logger import logger
+# from app.src.common.utils import read_yaml, get_folder_path
+# from app.src.logger import logger
 
 
 # Set the application variables
@@ -25,7 +25,7 @@ DB_CONFIG = {
     "db_name": os.getenv("DB_NAME", "fastcash"),
     "db_user": os.getenv("DB_USER", "root"),
     "db_password": os.getenv("DB_PASSWORD", "SUPERduper42"),
-    "db_port": os.getenv("DB_PORT", "5492"),
+    "db_port": os.getenv("DB_PORT", "5442"),
     "db_host": os.getenv("DB_HOST", "localhost"),
 }
 
@@ -36,11 +36,10 @@ APP_PATH: str = os.environ.get("PROJECT_WORKSPACE", os.path.abspath("."))
 # Read the application configuration settings
 config_path: str = os.path.join(APP_PATH, "app", "config")
 
-
-logger.info(f"App path: {APP_PATH}")
-logger.info(f"Config path: {config_path}")
-logger.info(f"Get folder path: {get_folder_path}")
-
-
 # Read the configurations
-APP_CONFIG = read_yaml(config_path, filename="settings.yml")
+# APP_CONFIG = read_yaml(config_path, filename="settings.yml")
+
+
+# logger.info(f"App path: {APP_PATH}")
+# logger.info(f"Config path: {config_path}")
+# logger.info(f"Get folder path: {get_folder_path}")

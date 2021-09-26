@@ -1,10 +1,14 @@
+from sqlmodel import SQLModel, Field, Relationship
 from typing import TYPE_CHECKING, Optional, List
-from sqlmodel import Field, Relationship
-from app.src.schemas.entities import TagBase
-from app.src.models.db.link import ProductTagLink
+
+from app.src.models.link import ProductTagLink
 
 if TYPE_CHECKING:
-    from app.src.models.db.product import Product
+    from app.src.models.product import Product
+
+
+class TagBase(SQLModel):
+    name: str
 
 
 class Tag(TagBase, table=True):

@@ -3,7 +3,7 @@ import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 
 from app.src.db.manager import create_table
-from app.src.api.api_v1.api import api_router
+from app.src.api.api import api_router
 from app.src.logger import logger
 from app.src.config import (
     API_ENDPOINT_HOST,

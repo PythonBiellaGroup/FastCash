@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from typing import List, Any
 
-from app.src.models.api.product import ProductRead, ProductCreate, ProductUpdate
+from app.src.models.product import Product, ProductRead, ProductCreate, ProductUpdate
 from app.src.db.engine import get_db
 from app.src.db.manager import get_session
-from app.src.models.db.product import Product
 
 
 router = APIRouter()
@@ -18,7 +17,7 @@ def read_all_products(
     limit: int = Query(default=100, lte=100),
 ) -> Any:
     """
-    Retrieve items.
+    Retrieve all products
     """
     products = session.exec(select(Product).offset(offset).limit(limit)).all()
     return products
@@ -39,6 +38,9 @@ def read_all_products(
 
 @router.post("/", response_model=ProductRead)
 def create_product(product: ProductCreate) -> Any:
+    """
+    Create a new single product
+    """
     engine = get_db()
     with Session(engine) as session:
         db_product = Product.from_orm(product)
@@ -58,8 +60,11 @@ def create_product(product: ProductCreate) -> Any:
 #         return product
 
 
-@router.patch("/{product_id}", response_model=ProductRead)
-def update_hero_id(product_id: int, product: ProductUpdate):
+@router.patch("/update/{product_id}", response_model=ProductRead)
+def update_product_by_id(product_id: int, product: ProductUpdate):
+    """
+    Modify and existing product by id
+    """
     engine = get_db()
     with Session(engine) as session:
         db_product = session.get(Product, product_id)
@@ -74,8 +79,11 @@ def update_hero_id(product_id: int, product: ProductUpdate):
         return db_product
 
 
-@router.patch("/{name}", response_model=ProductRead)
-def update_hero_name(product_name: int, product: ProductUpdate):
+@router.patch("/update/{name}", response_model=ProductRead)
+def update_product_by_name(product_name: int, product: ProductUpdate):
+    """
+    Modify an existing product by name
+    """
     engine = get_db()
     with Session(engine) as session:
         db_product = session.get(Product, product_name)
@@ -93,7 +101,10 @@ def update_hero_name(product_name: int, product: ProductUpdate):
 
 
 @router.delete("/{product_id}")
-def delete_hero(product_id: int):
+def delete_product(product_id: int):
+    """
+    Delete and remove an existing product by id
+    """
     engine = get_db()
     with Session(engine) as session:
         product = session.get(Product, product_id)

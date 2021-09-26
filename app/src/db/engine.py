@@ -11,7 +11,9 @@ from app.src.logger import logger
 def get_db():
     try:
         config = Configurator()
-        config.scan('..models')
+        config.scan(
+            "app.src.models"
+        )  # need to scan a folder and import classes and models
         engine = get_engine()
         logger.info("Connected to PostgreSQL database!")
     except IOError:
