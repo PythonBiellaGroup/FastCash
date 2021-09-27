@@ -12,7 +12,7 @@
 
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
-	"service": "zanichelli_etl_dev",
+	"service": "admin_app_dev",
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
@@ -51,10 +51,10 @@
 		"visualstudioexptteam.vscodeintellicode",
 		"redhat.vscode-yaml",
 		"ms-vscode-remote.vscode-remote-extensionpack"
-	]
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [8000],
 
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
 	// "runServices": [],
