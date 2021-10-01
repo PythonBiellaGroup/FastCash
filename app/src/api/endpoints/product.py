@@ -8,6 +8,13 @@ from app.src.db.engine import get_session
 # TODO Gestione dei tag di prodotto
 router = APIRouter()
 
+async def get_product_or_404(*, session: Session = Depends(get_session),
+                      product_id: int = Path(..., ge=1)):
+    try:
+        return session.get(Product, product_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Product not found")
+
 
 @router.get("/", response_model=List[ProductReadwithTypeAndTags])
 async def read_all_products(
@@ -24,17 +31,19 @@ async def read_all_products(
 
 @router.get("/{product_id}", response_model=ProductReadwithTypeAndTags)
 async def read_product(*, session: Session = Depends(get_session),
-                      product_id: int = Path(..., ge=1)):
+                      db_product: Product = Depends(get_product_or_404)):
     """
     Get the product type by id
     """
-    p = session.get(Product, product_id)
-    if not p:
-        raise HTTPException(
-            status_code=404,
-            detail="Product type not found"
-            )
-    return p
+    # Le righe commentate sotto, sostituite dalla nuova Depends
+    # Nota: il parametro product_id a get_product_or_404 è preso dal path
+    # p = session.get(Product, product_id)
+    # if not p:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="Product type not found"
+    #         )
+    return db_product
 
 
 # TODO: avoid DETAIL:  Key (type_id)=(2) is not present in table "producttype"
@@ -55,13 +64,16 @@ async def create_product(*, session: Session = Depends(get_session),
 
 @router.patch("/update/{product_id}", response_model=ProductRead)
 async def update_product_by_id(*, session: Session = Depends(get_session),
-                               product_id: int, product: ProductUpdate):
+                               product: ProductUpdate,
+                               db_product: Product = Depends(get_product_or_404)):
     """
     Modify and existing product by id
     """
-    db_product = session.get(Product, product_id)
-    if not db_product:
-        raise HTTPException(status_code=404, detail="Product not found")
+    # Le righe commentate sotto, sostituite dalla nuova Depends
+    # Nota: il parametro product_id a get_product_or_404 è preso dal path
+    # db_product = session.get(Product, product_id)
+    # if not db_product:
+    #     raise HTTPException(status_code=404, detail="Product not found")
     pr_data = product.dict(exclude_unset=True)
     for key, value in pr_data.items():
         setattr(db_product, key, value)
@@ -95,15 +107,17 @@ async def update_product_by_name(*, session: Session = Depends(get_session),
 
 @router.delete("/{product_id}")
 async def delete_product(*, session: Session = Depends(get_session),
-                         product_id: int = Path(..., ge=1)):
+                         product: Product = Depends(get_product_or_404)):
     """
     Delete and remove an existing product by id; it must be >= 1
     """
-    product = session.get(Product, product_id)
-    if not product:
-        raise HTTPException(
-            status_code=404, detail="Product not found, impossible to remove"
-        )
+    # Le righe commentate sotto, sostituite dalla nuova Depends
+    # Nota: il parametro product_id a get_product_or_404 è preso dal path
+    # product = session.get(Product, product_id)
+    # if not product:
+    #     raise HTTPException(
+    #         status_code=404, detail="Product not found, impossible to remove"
+    #     )
     session.delete(product)
     session.commit()
     return {"ok": True}
