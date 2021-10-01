@@ -33,7 +33,7 @@ class ProductRead(ProductBase):
     description: str
     price: float
     available: bool
-    type_id: Optional[int] = None
+    # type_id: Optional[int] = None
 
 
 class ProductCreate(ProductBase):

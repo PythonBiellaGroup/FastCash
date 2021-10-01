@@ -40,4 +40,5 @@ class ProductTypeRead(ProductTypeBase):
 # Nel modello update tutti gli attributi devono essere opzionali
 class ProductTypeUpdate(SQLModel):
     name: Optional[str] = None
+    description: Optional[str] = None
 
