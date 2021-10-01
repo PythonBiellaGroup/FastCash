@@ -18,12 +18,26 @@ class ProductType(ProductTypeBase, table=True):
     products: List["Product"] = Relationship(back_populates="product_type")
 
 
-class ProductTypeRead(ProductTypeBase):
-    id: int
-    name: str
-    description: str
-    # products: List["Product"]
+# class ProductTypeRead(ProductTypeBase):
+#     id: int
+#     name: str
+#     description: str
+#     # products: List["Product"]
 
 
 class ProductTypeReadwithProduct(ProductTypeBase):
     product_type: Optional["ProductRead"] = None
+
+
+class ProductTypeCreate(ProductTypeBase):
+    pass
+
+
+class ProductTypeRead(ProductTypeBase):
+    id: int
+
+
+# Nel modello update tutti gli attributi devono essere opzionali
+class ProductTypeUpdate(SQLModel):
+    name: Optional[str] = None
+

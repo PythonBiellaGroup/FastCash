@@ -17,3 +17,16 @@ class Tag(TagBase, table=True):
     products: List["Product"] = Relationship(
         back_populates="tags", link_model=ProductTagLink
     )
+
+
+class TagCreate(TagBase):
+    pass
+
+
+class TagRead(TagBase):
+    id: int
+
+
+# Nel modello update tutti gli attributi devono essere opzionali
+class TagUpdate(SQLModel):
+    name: Optional[str] = None
