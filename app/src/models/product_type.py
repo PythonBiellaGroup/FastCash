@@ -18,13 +18,6 @@ class ProductType(ProductTypeBase, table=True):
     products: List["Product"] = Relationship(back_populates="product_type")
 
 
-# class ProductTypeRead(ProductTypeBase):
-#     id: int
-#     name: str
-#     description: str
-#     # products: List["Product"]
-
-
 class ProductTypeReadwithProduct(ProductTypeBase):
     product_type: Optional["ProductRead"] = None
 

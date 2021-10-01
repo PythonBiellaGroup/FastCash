@@ -1,5 +1,6 @@
-# define postgres sqlalchemy engine connection
-from sqlmodel import create_engine
+from typing import Generator
+
+from sqlmodel import create_engine, Session
 from sqlalchemy import engine
 
 from pyramid.config import Configurator
@@ -23,11 +24,11 @@ def get_db():
     return engine
 
 
+# define postgres sqlalchemy engine connection
 def get_engine() -> engine:
     """
     Sets up database connection from config database dict.
     """
-
     if not (
         "db_host" in DB_CONFIG.keys()
         and "db_user" in DB_CONFIG.keys()
@@ -45,5 +46,11 @@ def get_engine() -> engine:
         db=DB_CONFIG["db_name"],
     )
     engine = create_engine(url=url, pool_size=50)
-
     return engine
+
+
+# get engine sqlalchemy session
+def get_session() -> Generator:
+    engine = get_db()
+    with Session(engine) as session:
+        yield session

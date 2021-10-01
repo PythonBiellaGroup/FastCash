@@ -3,11 +3,14 @@ from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import String
 from sqlalchemy.sql.schema import Column
 from app.src.models.link import ProductTagLink
+from app.src.models.product_type import ProductTypeRead
+from app.src.models.product_type import ProductType
+from app.src.models.tag import Tag, TagRead
 
-if TYPE_CHECKING:
-    from app.src.models.product_type import ProductTypeRead
-    from app.src.models.product_type import ProductType
-    from app.src.models.tag import Tag
+# if TYPE_CHECKING:
+#     from app.src.models.product_type import ProductTypeRead
+#     from app.src.models.product_type import ProductType
+#     from app.src.models.tag import Tag, TagRead
 
 
 class ProductBase(SQLModel):
@@ -37,14 +40,10 @@ class ProductRead(ProductBase):
 
 
 class ProductCreate(ProductBase):
-    name: str
-    description: str
-    price: float
-    available: bool
-    type_id: Optional[int] = None
+    pass
 
 
-class ProductUpdate(ProductBase):
+class ProductUpdate(SQLModel):
     name: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
@@ -52,9 +51,6 @@ class ProductUpdate(ProductBase):
     type_id: Optional[int] = None
 
 
-class ProductDelete(ProductBase):
-    pass
-
-
-class ProductReadwithType(ProductRead):
-    product_type: Optional["ProductTypeRead"] = None
+class ProductReadwithTypeAndTags(ProductRead):
+    product_type: Optional[ProductTypeRead] = None
+    tags: List[TagRead] = []

@@ -3,9 +3,7 @@ from sqlmodel import Session, select
 from typing import List, Any
 
 from app.src.models.product_type import ProductType, ProductTypeRead, ProductTypeCreate, ProductTypeUpdate
-from app.src.db.engine import get_db
-from app.src.db.manager import get_session
-
+from app.src.db.engine import get_session
 
 router = APIRouter()
 
@@ -15,6 +13,9 @@ router = APIRouter()
 async def read_product_types(*, session: Session = Depends(get_session),
                        offset: int = 0,
                        limit: int = Query(default=100, lte=100)):
+    """
+    Get all the existing product types
+    """
     product_types = session.exec(
         select(ProductType).offset(offset).limit(limit)).all()
     return product_types
@@ -24,6 +25,9 @@ async def read_product_types(*, session: Session = Depends(get_session),
 @router.get("/{producttype_id}", response_model=ProductTypeRead)
 async def read_product_type(*, session: Session = Depends(get_session),
                       producttype_id: int = Path(..., ge=1)):
+    """
+    Get the product type by id
+    """
     pt = session.get(ProductType, producttype_id)
     if not pt:
         raise HTTPException(
@@ -37,6 +41,9 @@ async def read_product_type(*, session: Session = Depends(get_session),
 @router.post("/", response_model=ProductTypeRead)
 async def create_product_type(*, session: Session = Depends(get_session),
                         product_type: ProductTypeCreate):
+    """
+    Add a product type
+    """
     db_pt = ProductType.from_orm(product_type)
     session.add(db_pt)
     session.commit()
@@ -47,6 +54,9 @@ async def create_product_type(*, session: Session = Depends(get_session),
 @router.patch("/{producttype_id}", response_model=ProductTypeRead)
 async def update_product_type(*, session: Session = Depends(get_session),
                         producttype_id: int, pt: ProductTypeUpdate):
+    """
+    Modify a product type
+    """
     db_pt = session.get(ProductType, producttype_id)
     if not db_pt:
         raise HTTPException(status_code=404, detail="Product type found")
