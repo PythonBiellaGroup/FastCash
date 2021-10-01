@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[ProductRead])
-def read_all_products(
+async def read_all_products(
     session: Session = Depends(get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),

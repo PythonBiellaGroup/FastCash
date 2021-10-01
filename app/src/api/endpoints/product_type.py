@@ -45,7 +45,7 @@ async def create_product_type(*, session: Session = Depends(get_session),
 
 
 @router.patch("/{producttype_id}", response_model=ProductTypeRead)
-def update_product_type(*, session: Session = Depends(get_session),
+async def update_product_type(*, session: Session = Depends(get_session),
                         producttype_id: int, pt: ProductTypeUpdate):
     db_pt = session.get(ProductType, producttype_id)
     if not db_pt:
@@ -62,7 +62,7 @@ def update_product_type(*, session: Session = Depends(get_session),
 
 
 @router.delete("/{producttype_id}")
-def delete_product_type(*, session: Session = Depends(get_session),
+async def delete_product_type(*, session: Session = Depends(get_session),
                         producttype_id: int = Path(..., ge=1)):
     """
     Delete and remove an existing product type by id; it must be >= 1
