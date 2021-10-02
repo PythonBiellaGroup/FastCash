@@ -9,8 +9,9 @@ from app.src.db.engine import get_session
 router = APIRouter()
 
 
-async def get_tag_or_404(*, session: Session = Depends(get_session),
-                      tag_id: int = Path(..., ge=1)):
+async def get_tag_or_404(
+    *, session: Session = Depends(get_session), tag_id: int = Path(..., ge=1)
+):
     try:
         db_tag = session.get(Tag, tag_id)
         if db_tag:
@@ -38,7 +39,6 @@ async def read_tag(*, db_tag: Tag = Depends(get_tag_or_404)):
     return db_tag
 
 
-
 @router.post("/", response_model=TagRead)
 async def create_tags(*, session: Session = Depends(get_session), tag: TagCreate):
     """
@@ -52,9 +52,12 @@ async def create_tags(*, session: Session = Depends(get_session), tag: TagCreate
 
 
 @router.patch("/{tag_id}", response_model=TagRead)
-async def update_tag(*, session: Session = Depends(get_session),
-                        db_t: Tag = Depends(get_tag_or_404),
-                        t: TagUpdate):
+async def update_tag(
+    *,
+    session: Session = Depends(get_session),
+    db_t: Tag = Depends(get_tag_or_404),
+    t: TagUpdate
+):
     """
     Modify a tag
     """
@@ -70,8 +73,9 @@ async def update_tag(*, session: Session = Depends(get_session),
 
 
 @router.delete("/{tag_id}")
-async def delete_tag(*, session: Session = Depends(get_session),
-                     db_tag: Tag = Depends(get_tag_or_404)):
+async def delete_tag(
+    *, session: Session = Depends(get_session), db_tag: Tag = Depends(get_tag_or_404)
+):
     """
     Delete and remove an existing product type by id; it must be >= 1
     """

@@ -1,8 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlmodel import Session, select
-from typing import List, Any
+from typing import List
 
-from app.src.models.product_type import ProductType, ProductTypeRead, ProductTypeCreate, ProductTypeUpdate
+from app.src.models.product_type import (
+    ProductType,
+    ProductTypeRead,
+    ProductTypeCreate,
+    ProductTypeUpdate,
+)
 from app.src.db.engine import get_session
 
 router = APIRouter()
@@ -10,28 +15,31 @@ router = APIRouter()
 
 # A scopo didattico inserita la validazione di producttype_id con Path:
 # - non potrà essere < 1
-async def get_producttype_or_404(*, session: Session = Depends(get_session),
-                      producttype_id: int = Path(..., ge=1)):
+async def get_producttype_or_404(
+    *, session: Session = Depends(get_session), producttype_id: int = Path(..., ge=1)
+):
     try:
         db_pt = session.get(ProductType, producttype_id)
         if db_pt:
             return db_pt
         else:
-            raise HTTPException(status_code=404, detail="Product type not found")    
+            raise HTTPException(status_code=404, detail="Product type not found")
     except KeyError:
         raise HTTPException(status_code=400, detail="Product type not found")
 
 
 @router.get("/", response_model=List[ProductTypeRead])
 # lte -> less than or equal
-async def read_product_types(*, session: Session = Depends(get_session),
-                       offset: int = 0,
-                       limit: int = Query(default=100, lte=100)):
+async def read_product_types(
+    *,
+    session: Session = Depends(get_session),
+    offset: int = 0,
+    limit: int = Query(default=100, lte=100)
+):
     """
     Get all the existing product types
     """
-    product_types = session.exec(
-        select(ProductType).offset(offset).limit(limit)).all()
+    product_types = session.exec(select(ProductType).offset(offset).limit(limit)).all()
     return product_types
 
 
@@ -44,8 +52,9 @@ async def read_product_type(*, db_pt: ProductType = Depends(get_producttype_or_4
 
 
 @router.post("/", response_model=ProductTypeRead)
-async def create_product_type(*, session: Session = Depends(get_session),
-                        product_type: ProductTypeCreate):
+async def create_product_type(
+    *, session: Session = Depends(get_session), product_type: ProductTypeCreate
+):
     """
     Create a product type
     """
@@ -57,9 +66,12 @@ async def create_product_type(*, session: Session = Depends(get_session),
 
 
 @router.patch("/{producttype_id}", response_model=ProductTypeRead)
-async def update_product_type(*, session: Session = Depends(get_session),
-                              db_pt: ProductType = Depends(get_producttype_or_404),
-                              pt: ProductTypeUpdate):
+async def update_product_type(
+    *,
+    session: Session = Depends(get_session),
+    db_pt: ProductType = Depends(get_producttype_or_404),
+    pt: ProductTypeUpdate
+):
     """
     Modify a product type
     """
@@ -75,8 +87,11 @@ async def update_product_type(*, session: Session = Depends(get_session),
 
 
 @router.delete("/{producttype_id}")
-async def delete_product_type(*, session: Session = Depends(get_session),
-                              db_pt: ProductType = Depends(get_producttype_or_404)):
+async def delete_product_type(
+    *,
+    session: Session = Depends(get_session),
+    db_pt: ProductType = Depends(get_producttype_or_404)
+):
     """
     Delete and remove an existing product type by id; it must be >= 1
     """

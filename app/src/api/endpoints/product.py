@@ -5,15 +5,23 @@ from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
 from typing import List, Any
 
-from app.src.models.product import Product, ProductRead, ProductCreate, ProductUpdate, ProductReadwithTypeAndTags
+from app.src.models.product import (
+    Product,
+    ProductRead,
+    ProductCreate,
+    ProductUpdate,
+    ProductReadwithTypeAndTags,
+)
 from app.src.db.engine import get_session
 from app.src.api.endpoints.tags import get_tag_or_404
 
 
 router = APIRouter()
 
-async def get_product_or_404(*, session: Session = Depends(get_session),
-                      product_id: int = Path(..., ge=1)):
+
+async def get_product_or_404(
+    *, session: Session = Depends(get_session), product_id: int = Path(..., ge=1)
+):
     try:
         db_product = session.get(Product, product_id)
         if db_product:
@@ -54,29 +62,34 @@ async def read_product(*, db_product: Product = Depends(get_product_or_404)):
 
 
 @router.post("/", response_model=ProductRead)
-async def create_product(*, session: Session = Depends(get_session),
-                         product: ProductCreate) -> Any:
+async def create_product(
+    *, session: Session = Depends(get_session), product: ProductCreate
+) -> Any:
     """
     Create a new single product
     """
     # Controllo esistenza product type
-    pt = await get_producttype_or_404(producttype_id=product.type_id, session=session)
+    _ = await get_producttype_or_404(producttype_id=product.type_id, session=session)
     # Controllo integrità o altri errori
     try:
         db_product = Product.from_orm(product)
         session.add(db_product)
         session.commit()
     except IntegrityError:
-        raise HTTPException(status_code=404, detail="Impossible to create product with same name")
+        raise HTTPException(
+            status_code=404, detail="Impossible to create product with same name"
+        )
     session.refresh(db_product)
     return db_product
 
 
-
 @router.patch("/update/{product_id}", response_model=ProductRead)
-async def update_product_by_id(*, session: Session = Depends(get_session),
-                               product: ProductUpdate,
-                               db_product: Product = Depends(get_product_or_404)):
+async def update_product_by_id(
+    *,
+    session: Session = Depends(get_session),
+    product: ProductUpdate,
+    db_product: Product = Depends(get_product_or_404)
+):
     """
     Modify and existing product by id
     """
@@ -95,14 +108,16 @@ async def update_product_by_id(*, session: Session = Depends(get_session),
 
 
 @router.patch("/update/by_name/{name}", response_model=ProductRead)
-async def update_product_by_name(*, session: Session = Depends(get_session),
-                                 product_name: str, product: ProductUpdate):
+async def update_product_by_name(
+    *,
+    session: Session = Depends(get_session),
+    product_name: str,
+    product: ProductUpdate
+):
     """
     Modify an existing product by name
     """
-    db_product = session.exec(
-            select(Product).where(Product.name == product_name)
-                 ).one()
+    db_product = session.exec(select(Product).where(Product.name == product_name)).one()
     if not db_product:
         raise HTTPException(
             status_code=404, detail="Product not found, impossible to update"
@@ -116,10 +131,15 @@ async def update_product_by_name(*, session: Session = Depends(get_session),
     return db_product
 
 
-@router.patch("/update/{product_id}/add_tag/{tag_id}", response_model=ProductReadwithTypeAndTags)
-async def update_product_with_tag(*, session: Session = Depends(get_session),
-                                 db_product: Product = Depends(get_product_or_404),
-                                 db_tag: Tag = Depends(get_tag_or_404)):
+@router.patch(
+    "/update/{product_id}/add_tag/{tag_id}", response_model=ProductReadwithTypeAndTags
+)
+async def update_product_add_tag(
+    *,
+    session: Session = Depends(get_session),
+    db_product: Product = Depends(get_product_or_404),
+    db_tag: Tag = Depends(get_tag_or_404)
+):
     """
     Add tag to product
     """
@@ -130,10 +150,16 @@ async def update_product_with_tag(*, session: Session = Depends(get_session),
     return db_product
 
 
-@router.patch("/update/{product_id}/remove_tag/{tag_id}", response_model=ProductReadwithTypeAndTags)
-async def update_product_with_tag(*, session: Session = Depends(get_session),
-                                 db_product: Product = Depends(get_product_or_404),
-                                 db_tag: Tag = Depends(get_tag_or_404)):
+@router.patch(
+    "/update/{product_id}/remove_tag/{tag_id}",
+    response_model=ProductReadwithTypeAndTags,
+)
+async def update_product_remove_tag(
+    *,
+    session: Session = Depends(get_session),
+    db_product: Product = Depends(get_product_or_404),
+    db_tag: Tag = Depends(get_tag_or_404)
+):
     """
     Remove tag from product
     """
@@ -145,8 +171,11 @@ async def update_product_with_tag(*, session: Session = Depends(get_session),
 
 
 @router.delete("/{product_id}")
-async def delete_product(*, session: Session = Depends(get_session),
-                         product: Product = Depends(get_product_or_404)):
+async def delete_product(
+    *,
+    session: Session = Depends(get_session),
+    product: Product = Depends(get_product_or_404)
+):
     """
     Delete and remove an existing product by id; it must be >= 1
     """

@@ -34,4 +34,3 @@ class ProductTypeRead(ProductTypeBase):
 class ProductTypeUpdate(SQLModel):
     name: Optional[str] = None
     description: Optional[str] = None
-

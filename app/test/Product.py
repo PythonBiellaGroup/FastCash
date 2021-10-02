@@ -17,7 +17,7 @@ def test_default():
 
 def test_test_noparameter():
     x = 20
-    response = client.get(f'/api/test/{x}')
+    response = client.get(f"/api/test/{x}")
     assert response.status_code == 400
     assert response.json() == {"Errore": "Z non è valorizzato"}
 
@@ -27,11 +27,17 @@ def test_test_allparameters():
     y = 50
     z = 10
 
-    response = client.get(f'/api/test/{x}?y={y}&z={z}')
+    response = client.get(f"/api/test/{x}?y={y}&z={z}")
 
     assert response.status_code == 200
 
     somma = x + y
     divisione = somma / z
 
-    assert response.json() == {"x": x, "y": y, "z": z, "somma": somma, "divisione": divisione}
+    assert response.json() == {
+        "x": x,
+        "y": y,
+        "z": z,
+        "somma": somma,
+        "divisione": divisione,
+    }
