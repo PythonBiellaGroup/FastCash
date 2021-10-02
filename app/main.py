@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi.security import APIKeyHeader
+from fastapi import FastAPI, Depends, HTTPException, status
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 
@@ -12,9 +13,18 @@ from app.src.config import (
     PROJECT_NAME,
     API_V1_STR,
     BACKEND_CORS_ORIGINS,
+    APP_API_TOKEN,
 )
 
-app = FastAPI(title=PROJECT_NAME, openapi_url=f"{API_V1_STR}/openapi.json")
+
+async def api_token(token: str = Depends(APIKeyHeader(name="Token"))):
+    if token != APP_API_TOKEN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+
+app = FastAPI(title=PROJECT_NAME,
+              openapi_url=f"{API_V1_STR}/openapi.json",
+              dependencies=[Depends(api_token)])
 
 # Set all CORS enabled origins
 if BACKEND_CORS_ORIGINS:
