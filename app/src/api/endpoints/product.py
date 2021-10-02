@@ -1,3 +1,4 @@
+from app.src.api.endpoints.product_type import get_producttype_or_404
 from app.src.models.tag import Tag
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlmodel import Session, select
@@ -49,20 +50,17 @@ async def read_product(*, db_product: Product = Depends(get_product_or_404)):
     return db_product
 
 
-# TODO: catch error DETAIL:  Key (type_id)=(2) is not present in table "producttype"
-# se si passa producttype_id non esistente
-# TODO: catch error DETAIL:  Key (name)=(string) already exists.
-# se si passa stesso nome
 @router.post("/", response_model=ProductRead)
 async def create_product(*, session: Session = Depends(get_session),
                          product: ProductCreate) -> Any:
     """
     Create a new single product
     """
-    try:
-        session.get(ProductType, product.type_id)
-    except KeyError:
-        raise HTTPException(status_code=404, detail="Linked product type not found")
+    # Controllo esistenza product type
+    pt = await get_producttype_or_404(producttype_id=product.type_id, session=session)
+    if not pt:
+        raise HTTPException(status_code=404, detail="Product type not found. Impossible to create product")
+    #TODO: non funziona: catch error DETAIL:  Key (name)=(string) already exists.
     try:
         db_product = Product.from_orm(product)
     except IntegrityError:
