@@ -14,6 +14,25 @@ If you want to save the virtualenv inside the project folder please do:
 
 Then you have to initialize the project with: `poetry install`
 
+If you want to use the environment variable, you have to create a .env variable with this values inside:
+```bash
+APP_DB_NAME=fastcash
+APP_DB_USER=root
+APP_DB_PASSWORD=<yourpassword>
+APP_DB_PORT=<yourport>
+APP_DB_HOST="fastcash-db"
+
+APP_ENDPOINT_HOST="localhost"
+APP_API_ENDPOINT_PORT=8044
+APP_DOCKER_PORT=8044
+APP_ENDPOINT_PORT=8044
+APP_SECRET_KEY=<yourappsecret>
+APP_DEBUG_MODE="False"
+APP_VERBOSITY="DEBUG"
+
+POSTGRES_DATA_DIR=<your_machine_data_folder>
+POSTGRES_BACKUP_DIR=<your_machine_backup_folder>
+```
 
 
 ## VSCode settings
