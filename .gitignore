@@ -21,6 +21,7 @@ saved_models
 
 #Custom rules
 .vscode
+.env
 .python-version
 logs
 *.csv

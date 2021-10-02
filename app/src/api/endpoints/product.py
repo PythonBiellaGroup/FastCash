@@ -16,9 +16,13 @@ router = APIRouter()
 async def get_product_or_404(*, session: Session = Depends(get_session),
                       product_id: int = Path(..., ge=1)):
     try:
-        return session.get(Product, product_id)
+        db_product = session.get(Product, product_id)
+        if db_product:
+            return session.get(Product, product_id)
+        else:
+            raise HTTPException(status_code=404, detail="Product not found")
     except KeyError:
-        raise HTTPException(status_code=404, detail="Product not found")
+        raise HTTPException(status_code=400, detail="Product not found")
 
 
 @router.get("/", response_model=List[ProductReadwithTypeAndTags])
@@ -58,15 +62,13 @@ async def create_product(*, session: Session = Depends(get_session),
     """
     # Controllo esistenza product type
     pt = await get_producttype_or_404(producttype_id=product.type_id, session=session)
-    if not pt:
-        raise HTTPException(status_code=404, detail="Product type not found. Impossible to create product")
-    #TODO: non funziona: catch error DETAIL:  Key (name)=(string) already exists.
+    # Controllo integrità o altri errori
     try:
         db_product = Product.from_orm(product)
+        session.add(db_product)
+        session.commit()
     except IntegrityError:
-        raise HTTPException(status_code=404, detail="Impossible to create product")
-    session.add(db_product)
-    session.commit()
+        raise HTTPException(status_code=404, detail="Impossible to create product with same name")
     session.refresh(db_product)
     return db_product
 
