@@ -8,6 +8,15 @@ from app.src.db.engine import get_session
 
 router = APIRouter()
 
+
+async def get_tag_or_404(*, session: Session = Depends(get_session),
+                      tag_id: int = Path(..., ge=1)):
+    try:
+        return session.get(Tag, tag_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Tag not found")
+
+
 @router.get("/", response_model=List[TagRead])
 async def read_tags(*, session: Session = Depends(get_session)):
     """
@@ -19,17 +28,11 @@ async def read_tags(*, session: Session = Depends(get_session)):
 
 @router.get("/{tag_id}", response_model=TagRead)
 async def read_tag(*, session: Session = Depends(get_session),
-                      tag_id: int = Path(..., ge=1)):
+                   db_tag: Tag = Depends(get_tag_or_404)):
     """
     Get the tag by id
     """
-    t = session.get(Tag, tag_id)
-    if not t:
-        raise HTTPException(
-            status_code=404,
-            detail="Tag not found"
-            )
-    return t
+    return db_tag
 
 
 
@@ -44,13 +47,11 @@ async def create_tags(*, session: Session = Depends(get_session), tag: TagCreate
 
 @router.patch("/{tag_id}", response_model=TagRead)
 async def update_tag(*, session: Session = Depends(get_session),
-                        tag_id: int, t: TagUpdate):
+                        db_t: Tag = Depends(get_tag_or_404),
+                        t: TagUpdate):
     """
     Modify a tag
     """
-    db_t = session.get(Tag, tag_id)
-    if not db_t:
-        raise HTTPException(status_code=404, detail="Tag not found")
     # exclude_unset=True: it would only include the values
     # that were sent by the client
     t_data = t.dict(exclude_unset=True)
@@ -64,18 +65,10 @@ async def update_tag(*, session: Session = Depends(get_session),
 
 @router.delete("/{tag_id}")
 async def delete_tag(*, session: Session = Depends(get_session),
-                     tag_id: int = Path(..., ge=1)):
+                     db_tag: Tag = Depends(get_tag_or_404)):
     """
     Delete and remove an existing product type by id; it must be >= 1
     """
-    t = session.get(Tag, tag_id)
-    if not t:
-        raise HTTPException(
-            status_code=404,
-            detail="Tag not found"
-            )
-    session.delete(t)
+    session.delete(db_tag)
     session.commit()
     return {"ok": True}
-
-

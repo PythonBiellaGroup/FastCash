@@ -8,6 +8,14 @@ from app.src.db.engine import get_session
 router = APIRouter()
 
 
+async def get_producttype_or_404(*, session: Session = Depends(get_session),
+                      producttype_id: int = Path(..., ge=1)):
+    try:
+        return session.get(ProductType, producttype_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Product type not found")
+
+
 @router.get("/", response_model=List[ProductTypeRead])
 # lte -> less than or equal
 async def read_product_types(*, session: Session = Depends(get_session),
@@ -24,17 +32,11 @@ async def read_product_types(*, session: Session = Depends(get_session),
 # - non potrà essere < 1
 @router.get("/{producttype_id}", response_model=ProductTypeRead)
 async def read_product_type(*, session: Session = Depends(get_session),
-                      producttype_id: int = Path(..., ge=1)):
+                            db_pt: ProductType = Depends(get_producttype_or_404)):
     """
     Get the product type by id
     """
-    pt = session.get(ProductType, producttype_id)
-    if not pt:
-        raise HTTPException(
-            status_code=404,
-            detail="Product type not found"
-            )
-    return pt
+    return db_pt
 
 
 
@@ -53,13 +55,11 @@ async def create_product_type(*, session: Session = Depends(get_session),
 
 @router.patch("/{producttype_id}", response_model=ProductTypeRead)
 async def update_product_type(*, session: Session = Depends(get_session),
-                        producttype_id: int, pt: ProductTypeUpdate):
+                              db_pt: ProductType = Depends(get_producttype_or_404),
+                              pt: ProductTypeUpdate):
     """
     Modify a product type
     """
-    db_pt = session.get(ProductType, producttype_id)
-    if not db_pt:
-        raise HTTPException(status_code=404, detail="Product type found")
     # exclude_unset=True: it would only include the values
     # that were sent by the client
     pt_data = pt.dict(exclude_unset=True)
@@ -73,17 +73,10 @@ async def update_product_type(*, session: Session = Depends(get_session),
 
 @router.delete("/{producttype_id}")
 async def delete_product_type(*, session: Session = Depends(get_session),
-                        producttype_id: int = Path(..., ge=1)):
+                              db_pt: ProductType = Depends(get_producttype_or_404)):
     """
     Delete and remove an existing product type by id; it must be >= 1
     """
-    pt = session.get(ProductType, producttype_id)
-    if not pt:
-        raise HTTPException(
-            status_code=404,
-            detail="Product type not found"
-            )
-    session.delete(pt)
+    session.delete(db_pt)
     session.commit()
     return {"ok": True}
-
