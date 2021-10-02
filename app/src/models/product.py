@@ -7,11 +7,6 @@ from app.src.models.product_type import ProductTypeRead
 from app.src.models.product_type import ProductType
 from app.src.models.tag import Tag, TagRead
 
-# if TYPE_CHECKING:
-#     from app.src.models.product_type import ProductTypeRead
-#     from app.src.models.product_type import ProductType
-#     from app.src.models.tag import Tag, TagRead
-
 
 class ProductBase(SQLModel):
     name: str

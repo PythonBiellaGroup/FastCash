@@ -37,6 +37,9 @@ async def read_tag(*, db_tag: Tag = Depends(get_tag_or_404)):
 
 @router.post("/", response_model=TagRead)
 async def create_tags(*, session: Session = Depends(get_session), tag: TagCreate):
+    """
+    Create a tag
+    """
     db_t = Tag.from_orm(tag)
     session.add(db_t)
     session.commit()

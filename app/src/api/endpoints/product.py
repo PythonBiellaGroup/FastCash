@@ -1,11 +1,15 @@
+from app.src.models.tag import Tag
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlmodel import Session, select
+from sqlalchemy.exc import IntegrityError
 from typing import List, Any
 
 from app.src.models.product import Product, ProductRead, ProductCreate, ProductUpdate, ProductReadwithTypeAndTags
+from app.src.models.product_type import ProductType
 from app.src.db.engine import get_session
+from app.src.api.endpoints.tags import get_tag_or_404
 
-# TODO Gestione dei tag di prodotto
+
 router = APIRouter()
 
 async def get_product_or_404(*, session: Session = Depends(get_session),
@@ -45,15 +49,24 @@ async def read_product(*, db_product: Product = Depends(get_product_or_404)):
     return db_product
 
 
-# TODO: avoid DETAIL:  Key (type_id)=(2) is not present in table "producttype"
+# TODO: catch error DETAIL:  Key (type_id)=(2) is not present in table "producttype"
 # se si passa producttype_id non esistente
+# TODO: catch error DETAIL:  Key (name)=(string) already exists.
+# se si passa stesso nome
 @router.post("/", response_model=ProductRead)
 async def create_product(*, session: Session = Depends(get_session),
                          product: ProductCreate) -> Any:
     """
     Create a new single product
     """
-    db_product = Product.from_orm(product)
+    try:
+        session.get(ProductType, product.type_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Linked product type not found")
+    try:
+        db_product = Product.from_orm(product)
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Impossible to create product")
     session.add(db_product)
     session.commit()
     session.refresh(db_product)
@@ -98,6 +111,34 @@ async def update_product_by_name(*, session: Session = Depends(get_session),
     pr_data = product.dict(exclude_unset=True)  # to use the nullable data
     for key, value in pr_data.items():
         setattr(db_product, key, value)
+    session.add(db_product)
+    session.commit()
+    session.refresh(db_product)
+    return db_product
+
+
+@router.patch("/update/{product_id}/add_tag/{tag_id}", response_model=ProductReadwithTypeAndTags)
+async def update_product_with_tag(*, session: Session = Depends(get_session),
+                                 db_product: Product = Depends(get_product_or_404),
+                                 db_tag: Tag = Depends(get_tag_or_404)):
+    """
+    Add tag to product
+    """
+    db_product.tags.append(db_tag)
+    session.add(db_product)
+    session.commit()
+    session.refresh(db_product)
+    return db_product
+
+
+@router.patch("/update/{product_id}/remove_tag/{tag_id}", response_model=ProductReadwithTypeAndTags)
+async def update_product_with_tag(*, session: Session = Depends(get_session),
+                                 db_product: Product = Depends(get_product_or_404),
+                                 db_tag: Tag = Depends(get_tag_or_404)):
+    """
+    Remove tag from product
+    """
+    db_product.tags.remove(db_tag)
     session.add(db_product)
     session.commit()
     session.refresh(db_product)

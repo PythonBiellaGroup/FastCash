@@ -44,7 +44,7 @@ async def read_product_type(*, db_pt: ProductType = Depends(get_producttype_or_4
 async def create_product_type(*, session: Session = Depends(get_session),
                         product_type: ProductTypeCreate):
     """
-    Add a product type
+    Create a product type
     """
     db_pt = ProductType.from_orm(product_type)
     session.add(db_pt)
