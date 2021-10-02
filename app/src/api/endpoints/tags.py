@@ -12,9 +12,13 @@ router = APIRouter()
 async def get_tag_or_404(*, session: Session = Depends(get_session),
                       tag_id: int = Path(..., ge=1)):
     try:
-        return session.get(Tag, tag_id)
+        db_tag = session.get(Tag, tag_id)
+        if db_tag:
+            return session.get(Tag, tag_id)
+        else:
+            raise HTTPException(status_code=404, detail="Tag not found")
     except KeyError:
-        raise HTTPException(status_code=404, detail="Tag not found")
+        raise HTTPException(status_code=400, detail="Tag not found")
 
 
 @router.get("/", response_model=List[TagRead])

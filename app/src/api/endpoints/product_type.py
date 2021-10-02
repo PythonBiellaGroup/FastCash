@@ -13,9 +13,13 @@ router = APIRouter()
 async def get_producttype_or_404(*, session: Session = Depends(get_session),
                       producttype_id: int = Path(..., ge=1)):
     try:
-        return session.get(ProductType, producttype_id)
+        db_pt = session.get(ProductType, producttype_id)
+        if db_pt:
+            return db_pt
+        else:
+            raise HTTPException(status_code=404, detail="Product type not found")    
     except KeyError:
-        raise HTTPException(status_code=404, detail="Product type not found")
+        raise HTTPException(status_code=400, detail="Product type not found")
 
 
 @router.get("/", response_model=List[ProductTypeRead])
@@ -37,7 +41,6 @@ async def read_product_type(*, db_pt: ProductType = Depends(get_producttype_or_4
     Get the product type by id
     """
     return db_pt
-
 
 
 @router.post("/", response_model=ProductTypeRead)
