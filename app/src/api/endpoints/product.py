@@ -30,8 +30,7 @@ async def read_all_products(
 
 
 @router.get("/{product_id}", response_model=ProductReadwithTypeAndTags)
-async def read_product(*, session: Session = Depends(get_session),
-                      db_product: Product = Depends(get_product_or_404)):
+async def read_product(*, db_product: Product = Depends(get_product_or_404)):
     """
     Get the product type by id
     """

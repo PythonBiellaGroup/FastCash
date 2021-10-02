@@ -8,6 +8,8 @@ from app.src.db.engine import get_session
 router = APIRouter()
 
 
+# A scopo didattico inserita la validazione di producttype_id con Path:
+# - non potrà essere < 1
 async def get_producttype_or_404(*, session: Session = Depends(get_session),
                       producttype_id: int = Path(..., ge=1)):
     try:
@@ -28,11 +30,9 @@ async def read_product_types(*, session: Session = Depends(get_session),
         select(ProductType).offset(offset).limit(limit)).all()
     return product_types
 
-# A scopo didattico inserita la validazione di producttype_id con Path:
-# - non potrà essere < 1
+
 @router.get("/{producttype_id}", response_model=ProductTypeRead)
-async def read_product_type(*, session: Session = Depends(get_session),
-                            db_pt: ProductType = Depends(get_producttype_or_404)):
+async def read_product_type(*, db_pt: ProductType = Depends(get_producttype_or_404)):
     """
     Get the product type by id
     """

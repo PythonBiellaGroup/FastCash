@@ -27,8 +27,7 @@ async def read_tags(*, session: Session = Depends(get_session)):
 
 
 @router.get("/{tag_id}", response_model=TagRead)
-async def read_tag(*, session: Session = Depends(get_session),
-                   db_tag: Tag = Depends(get_tag_or_404)):
+async def read_tag(*, db_tag: Tag = Depends(get_tag_or_404)):
     """
     Get the tag by id
     """
