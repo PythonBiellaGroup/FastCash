@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING, List
+from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import String
 from sqlalchemy.sql.schema import Column
@@ -19,8 +19,8 @@ class ProductBase(SQLModel):
 class Product(ProductBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(sa_column=Column("name", String, unique=True))
-    product_type: Optional["ProductType"] = Relationship(back_populates="products")
-    tags: List["Tag"] = Relationship(
+    product_type: Optional[ProductType] = Relationship(back_populates="products")
+    tags: List[Tag] = Relationship(
         back_populates="products", link_model=ProductTagLink
     )
 

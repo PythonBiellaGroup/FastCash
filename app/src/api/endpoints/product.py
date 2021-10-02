@@ -6,7 +6,6 @@ from sqlalchemy.exc import IntegrityError
 from typing import List, Any
 
 from app.src.models.product import Product, ProductRead, ProductCreate, ProductUpdate, ProductReadwithTypeAndTags
-from app.src.models.product_type import ProductType
 from app.src.db.engine import get_session
 from app.src.api.endpoints.tags import get_tag_or_404
 
