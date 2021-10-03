@@ -31,9 +31,9 @@ async def get_tag_by_name_or_404(
         if db_tag:
             return db_tag
         else:
-            raise HTTPException(status_code=404, detail="Tag not found")
+            raise HTTPException(status_code=404, detail="Tag not found by name")
     except KeyError:
-        raise HTTPException(status_code=400, detail="Tag not found")
+        raise HTTPException(status_code=400, detail="Tag not found by name")
 
 
 

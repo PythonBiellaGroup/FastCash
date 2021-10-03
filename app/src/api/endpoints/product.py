@@ -25,7 +25,7 @@ async def get_product_or_404(
     try:
         db_product = session.get(Product, product_id)
         if db_product:
-            return session.get(Product, product_id)
+            return db_product
         else:
             raise HTTPException(status_code=404, detail="Product not found")
     except KeyError:
