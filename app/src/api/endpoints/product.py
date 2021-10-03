@@ -1,4 +1,3 @@
-from app.src.api.endpoints.product_type import get_producttype_or_404
 from app.src.models.tag import Tag
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlmodel import Session, select
@@ -13,7 +12,8 @@ from app.src.models.product import (
     ProductReadwithTypeAndTags,
 )
 from app.src.db.engine import get_session
-from app.src.api.endpoints.tags import get_tag_or_404
+from app.src.api.endpoints.product_type import get_producttype_or_404
+from app.src.api.endpoints.tags import get_tag_or_404, get_tag_by_name_or_404
 
 
 router = APIRouter()
@@ -132,9 +132,9 @@ async def update_product_by_name(
 
 
 @router.patch(
-    "/update/{product_id}/add_tag/{tag_id}", response_model=ProductReadwithTypeAndTags
+    "/update/{product_id}/add_tag_by_id/{tag_id}", response_model=ProductReadwithTypeAndTags
 )
-async def update_product_add_tag(
+async def update_product_add_tag_by_id(
     *,
     session: Session = Depends(get_session),
     db_product: Product = Depends(get_product_or_404),
@@ -151,14 +151,53 @@ async def update_product_add_tag(
 
 
 @router.patch(
-    "/update/{product_id}/remove_tag/{tag_id}",
+    "/update/{product_id}/add_tag_by_name/{tag_name}", response_model=ProductReadwithTypeAndTags
+)
+async def update_product_add_tag_by_name(
+    *,
+    session: Session = Depends(get_session),
+    db_product: Product = Depends(get_product_or_404),
+    db_tag: Tag = Depends(get_tag_by_name_or_404)
+):
+    """
+    Add tag to product
+    """
+    db_product.tags.append(db_tag)
+    session.add(db_product)
+    session.commit()
+    session.refresh(db_product)
+    return db_product
+
+
+@router.patch(
+    "/update/{product_id}/remove_tag_by_id/{tag_id}",
     response_model=ProductReadwithTypeAndTags,
 )
-async def update_product_remove_tag(
+async def update_product_remove_tag_by_id(
     *,
     session: Session = Depends(get_session),
     db_product: Product = Depends(get_product_or_404),
     db_tag: Tag = Depends(get_tag_or_404)
+):
+    """
+    Remove tag from product
+    """
+    db_product.tags.remove(db_tag)
+    session.add(db_product)
+    session.commit()
+    session.refresh(db_product)
+    return db_product
+
+
+@router.patch(
+    "/update/{product_id}/remove_tag_by_name/{tag_name}",
+    response_model=ProductReadwithTypeAndTags,
+)
+async def update_product_remove_tag_by_name(
+    *,
+    session: Session = Depends(get_session),
+    db_product: Product = Depends(get_product_or_404),
+    db_tag: Tag = Depends(get_tag_by_name_or_404)
 ):
     """
     Remove tag from product

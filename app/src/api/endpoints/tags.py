@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlmodel import Session, select
+from sqlalchemy.exc import IntegrityError
 from typing import List, Any
 
 from app.src.models.tag import Tag, TagRead, TagCreate, TagUpdate
@@ -15,11 +16,25 @@ async def get_tag_or_404(
     try:
         db_tag = session.get(Tag, tag_id)
         if db_tag:
-            return session.get(Tag, tag_id)
+            return db_tag
         else:
             raise HTTPException(status_code=404, detail="Tag not found")
     except KeyError:
         raise HTTPException(status_code=400, detail="Tag not found")
+
+
+async def get_tag_by_name_or_404(
+    *, session: Session = Depends(get_session), tag_name: str
+):
+    try:
+        db_tag = session.exec(select(Tag).where(Tag.name == tag_name)).one()
+        if db_tag:
+            return db_tag
+        else:
+            raise HTTPException(status_code=404, detail="Tag not found")
+    except KeyError:
+        raise HTTPException(status_code=400, detail="Tag not found")
+
 
 
 @router.get("/", response_model=List[TagRead])
@@ -44,9 +59,14 @@ async def create_tags(*, session: Session = Depends(get_session), tag: TagCreate
     """
     Create a tag
     """
-    db_t = Tag.from_orm(tag)
-    session.add(db_t)
-    session.commit()
+    try:
+        db_t = Tag.from_orm(tag)
+        session.add(db_t)
+        session.commit()
+    except IntegrityError:
+        raise HTTPException(
+            status_code=404, detail="Impossible to create tag with same name"
+        )
     session.refresh(db_t)
     return db_t
 

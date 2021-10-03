@@ -1,6 +1,8 @@
 from sqlmodel import SQLModel
-from typing import TYPE_CHECKING, Optional, List
 from sqlmodel import Field, Relationship
+from sqlalchemy import String
+from sqlalchemy.sql.schema import Column
+from typing import TYPE_CHECKING, Optional, List
 
 if TYPE_CHECKING:
     from app.src.models.product import ProductRead
@@ -14,6 +16,7 @@ class ProductTypeBase(SQLModel):
 
 class ProductType(ProductTypeBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(sa_column=Column("name", String, unique=True))
     description: Optional[str] = Field(default=None)
     products: List["Product"] = Relationship(back_populates="product_type")
 

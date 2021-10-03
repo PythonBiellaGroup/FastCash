@@ -1,4 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import String
+from sqlalchemy.sql.schema import Column
 from typing import TYPE_CHECKING, Optional, List
 
 from app.src.models.link import ProductTagLink
@@ -13,6 +15,7 @@ class TagBase(SQLModel):
 
 class Tag(TagBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(sa_column=Column("name", String, unique=True))
     # foreign key = table name
     products: List["Product"] = Relationship(
         back_populates="tags", link_model=ProductTagLink

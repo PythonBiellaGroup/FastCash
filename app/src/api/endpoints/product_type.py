@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlmodel import Session, select
+from sqlalchemy.exc import IntegrityError
 from typing import List
 
 from app.src.models.product_type import (
@@ -58,9 +59,14 @@ async def create_product_type(
     """
     Create a product type
     """
-    db_pt = ProductType.from_orm(product_type)
-    session.add(db_pt)
-    session.commit()
+    try:
+        db_pt = ProductType.from_orm(product_type)
+        session.add(db_pt)
+        session.commit()
+    except IntegrityError:
+        raise HTTPException(
+            status_code=404, detail="Impossible to create product type with same name"
+        )
     session.refresh(db_pt)
     return db_pt
 

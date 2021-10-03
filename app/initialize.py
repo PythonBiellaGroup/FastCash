@@ -1,9 +1,9 @@
 # Initialize the db with the tables and dummy data
 from app.src.logger import logger
 from app.src.db.manager import create_table, insert_data
-from app.src.models.db.product import Product
-from app.src.models.db.product_type import ProductType
-from app.src.models.db.tag import Tag
+from app.src.models.product import Product
+from app.src.models.product_type import ProductType
+from app.src.models.tag import Tag
 
 
 def create_data():
