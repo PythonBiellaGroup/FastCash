@@ -3,8 +3,10 @@ from sqlmodel import Session, select
 from live.src.db.manager import create_table, insert_data
 from live.src.db.engine import get_engine
 from live.src.models.product import Product
+import pytest
 
 
+@pytest.mark.db
 def test_entities_without_rollback():
 
     # engine creation
@@ -14,9 +16,9 @@ def test_entities_without_rollback():
     create_table()
 
     panino = Product(
-        name="kebab",
-        description="senza cipolla",
-        price=3.30,
+        name="hamburger",
+        description="con salse",
+        price=4,
         available=True,
         product_type=None,
         tags=None,

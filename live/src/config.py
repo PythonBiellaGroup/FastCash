@@ -8,10 +8,10 @@ from pydantic import AnyHttpUrl
 
 
 # Set the application variables
-API_ENDPOINT_PORT: int = int(os.environ.get("API_ENDPOINT_PORT", 8042))
+API_ENDPOINT_PORT: int = int(os.environ.get("API_ENDPOINT_PORT", 8016))
 API_ENDPOINT_HOST: str = os.environ.get("API_ENDPOINT_HOST", "127.0.0.1")
 APP_SECRET_KEY: str = os.environ.get("APP_SECRET_KEY", "DEVtest42!!")
-API_V1_STR: str = os.environ.get("API_V1_STR", "/api/v1")
+API_STR: str = os.environ.get("API_V1_STR", "/api/v1")
 PROJECT_NAME: str = "fastcash"
 BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 

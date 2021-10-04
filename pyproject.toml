@@ -63,3 +63,10 @@ line_length = 120
 [build-system]
 requires = ["poetry-core>=1.0.8"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "db: mark test for db functionalities",
+    "app: all about the app",
+    "api: all about the api",
+]
