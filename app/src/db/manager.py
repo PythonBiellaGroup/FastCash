@@ -6,14 +6,12 @@ from app.src.logger import logger
 
 
 # create table
-def create_table() -> bool:
+async def create_table() -> bool:
     # Database Engine
-    db_engine = get_db()
+    db_engine = await get_db()
     try:
-        # for table in objects:
-        #     new_table = table
-        #     logger.debug(f"Creating new table: {new_table}")
-        SQLModel.metadata.create_all(db_engine)
+        async with db_engine.begin() as conn:
+            await conn.run_sync(SQLModel.metadata.create_all)        
         return True
     except Exception as message:
         logger.error(
@@ -23,6 +21,7 @@ def create_table() -> bool:
         raise Exception(message)
 
 
+# TODO
 # Destroy metadata table
 def destroy_metadata_table() -> bool:
     # Database Engine

@@ -40,12 +40,10 @@ app.include_router(api_router, prefix=API_V1_STR)
 
 
 @app.on_event("startup")
-def on_startup():
-    create_table()
+async def on_startup():
+    await create_table()
 
 
 if __name__ == "__main__":
     logger.debug(f"Starting server on: {API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}")
-
-    if DEBUG_MODE:
-        uvicorn.run(app, port=API_ENDPOINT_PORT, host=API_ENDPOINT_HOST)
+    uvicorn.run(app, port=API_ENDPOINT_PORT, host=API_ENDPOINT_HOST, reload=DEBUG_MODE)

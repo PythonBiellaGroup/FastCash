@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from typing import List
 
@@ -17,10 +18,11 @@ router = APIRouter()
 # A scopo didattico inserita la validazione di producttype_id con Path:
 # - non potrà essere < 1
 async def get_producttype_or_404(
-    *, session: Session = Depends(get_session), producttype_id: int = Path(..., ge=1)
+    *, session: AsyncSession = Depends(get_session), producttype_id: int = Path(..., ge=1)
 ):
     try:
-        db_pt = session.get(ProductType, producttype_id)
+        result = await session.execute(select(ProductType).where(ProductType.id == producttype_id))
+        db_pt = result.scalars().first()
         if db_pt:
             return db_pt
         else:
@@ -30,17 +32,15 @@ async def get_producttype_or_404(
 
 
 @router.get("/", response_model=List[ProductTypeRead])
-# lte -> less than or equal
 async def read_product_types(
     *,
-    session: Session = Depends(get_session),
-    offset: int = 0,
-    limit: int = Query(default=100, lte=100)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Get all the existing product types
     """
-    product_types = session.exec(select(ProductType).offset(offset).limit(limit)).all()
+    result = await session.execute(select(ProductType))
+    product_types = result.scalars().all()
     return product_types
 
 
@@ -54,27 +54,27 @@ async def read_product_type(*, db_pt: ProductType = Depends(get_producttype_or_4
 
 @router.post("/", response_model=ProductTypeRead)
 async def create_product_type(
-    *, session: Session = Depends(get_session), product_type: ProductTypeCreate
+    *, session: AsyncSession = Depends(get_session), product_type: ProductTypeCreate
 ):
     """
     Create a product type
     """
     try:
-        db_pt = ProductType.from_orm(product_type)
+        db_pt = ProductType(name=product_type.name, description=product_type.description)
         session.add(db_pt)
-        session.commit()
+        await session.commit()
     except IntegrityError:
         raise HTTPException(
             status_code=404, detail="Impossible to create product type with same name"
         )
-    session.refresh(db_pt)
+    await session.flush(db_pt)
     return db_pt
 
 
 @router.patch("/{producttype_id}", response_model=ProductTypeRead)
 async def update_product_type(
     *,
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     db_pt: ProductType = Depends(get_producttype_or_404),
     pt: ProductTypeUpdate
 ):
@@ -87,20 +87,21 @@ async def update_product_type(
     for key, value in pt_data.items():
         setattr(db_pt, key, value)
     session.add(db_pt)
-    session.commit()
-    session.refresh(db_pt)
+    await session.commit()
+    await session.flush(db_pt)
     return db_pt
 
 
 @router.delete("/{producttype_id}")
 async def delete_product_type(
     *,
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     db_pt: ProductType = Depends(get_producttype_or_404)
 ):
     """
     Delete and remove an existing product type by id; it must be >= 1
     """
-    session.delete(db_pt)
-    session.commit()
+    await session.delete(db_pt)
+    await session.commit()
+    await session.flush(db_pt)
     return {"ok": True}

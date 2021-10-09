@@ -1,8 +1,11 @@
+from os import name
 from fastapi import APIRouter, Depends, HTTPException, Path
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from typing import List, Any
 
+from app.src.logger import logger
 from app.src.models.tag import Tag, TagRead, TagCreate, TagUpdate
 from app.src.db.engine import get_session
 
@@ -11,11 +14,13 @@ router = APIRouter()
 
 
 async def get_tag_or_404(
-    *, session: Session = Depends(get_session), tag_id: int = Path(..., ge=1)
+    *, session: AsyncSession = Depends(get_session), tag_id: int = Path(..., ge=1)
 ):
     try:
-        db_tag = session.get(Tag, tag_id)
+        result = await session.execute(select(Tag).where(Tag.id == tag_id))
+        db_tag = result.scalars().first()
         if db_tag:
+            logger.info(f"Trovato tag: {db_tag}")
             return db_tag
         else:
             raise HTTPException(status_code=404, detail="Tag not found")
@@ -24,10 +29,11 @@ async def get_tag_or_404(
 
 
 async def get_tag_by_name_or_404(
-    *, session: Session = Depends(get_session), tag_name: str
+    *, session: AsyncSession = Depends(get_session), tag_name: str
 ):
     try:
-        db_tag = session.exec(select(Tag).where(Tag.name == tag_name)).one()
+        result = await session.execute(select(Tag).where(Tag.name == tag_name))
+        db_tag = result.scalars().first()
         if db_tag:
             return db_tag
         else:
@@ -38,11 +44,12 @@ async def get_tag_by_name_or_404(
 
 
 @router.get("/", response_model=List[TagRead])
-async def read_tags(*, session: Session = Depends(get_session)):
+async def read_tags(*, session: AsyncSession = Depends(get_session)):
     """
     Get all the existing tags
     """
-    tags = session.exec(select(Tag)).all()
+    result = await session.execute(select(Tag))
+    tags = result.scalars().all()
     return tags
 
 
@@ -55,26 +62,29 @@ async def read_tag(*, db_tag: Tag = Depends(get_tag_or_404)):
 
 
 @router.post("/", response_model=TagRead)
-async def create_tags(*, session: Session = Depends(get_session), tag: TagCreate):
+async def create_tags(*, session: AsyncSession = Depends(get_session), tag: TagCreate):
     """
     Create a tag
     """
     try:
-        db_t = Tag.from_orm(tag)
+        logger.info(tag)
+        db_t = Tag(name=tag.name)
+        logger.info(db_t)
+        #db_t = Tag.from_orm(tag)
         session.add(db_t)
-        session.commit()
+        await session.commit()
     except IntegrityError:
         raise HTTPException(
             status_code=404, detail="Impossible to create tag with same name"
         )
-    session.refresh(db_t)
+    await session.flush(db_t)
     return db_t
 
 
 @router.patch("/{tag_id}", response_model=TagRead)
 async def update_tag(
     *,
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     db_t: Tag = Depends(get_tag_or_404),
     t: TagUpdate
 ):
@@ -87,18 +97,19 @@ async def update_tag(
     for key, value in t_data.items():
         setattr(db_t, key, value)
     session.add(db_t)
-    session.commit()
-    session.refresh(db_t)
+    await session.commit()
+    await session.flush(db_t)
     return db_t
 
 
 @router.delete("/{tag_id}")
 async def delete_tag(
-    *, session: Session = Depends(get_session), db_tag: Tag = Depends(get_tag_or_404)
+    *, session: AsyncSession = Depends(get_session), db_tag: Tag = Depends(get_tag_or_404)
 ):
     """
     Delete and remove an existing product type by id; it must be >= 1
     """
-    session.delete(db_tag)
-    session.commit()
+    await session.delete(db_tag)
+    await session.commit()
+    await session.flush(db_tag)
     return {"ok": True}
