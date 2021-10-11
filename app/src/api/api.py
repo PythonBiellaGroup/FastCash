@@ -9,4 +9,4 @@ api_router.include_router(
     product_type.router, prefix="/product_type", tags=["product_type"]
 )
 api_router.include_router(app_user.router, prefix="/user", tags=["user"])
-api_router.include_router(login.router, prefix="/login", tags=["login", "token"])
+api_router.include_router(login.router, prefix="/login", tags=["login"])

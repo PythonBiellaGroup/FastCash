@@ -10,13 +10,16 @@ from app.src.logger import logger
 
 
 # API Logging
-def profiling_api(name, start):
+def profiling_api(description: str, start: dt, username: str = None):
     difference = dt.datetime.now() - start
     seconds = difference.total_seconds()
     milliseconds = seconds * 1000
-    logger.info(
-        name + " : " + str(seconds) + " seconds, " + str(milliseconds) + " milliseconds"
-    )
+    message_description = f"{description}"
+    message_time = f"| {str(seconds)} seconds, {str(round(milliseconds, 4))} milliseconds"
+    if username:
+        logger.info(f"{message_description}| by_user:{username} {message_time}")
+    else:
+        logger.info(f"{message_description}{message_time}")
 
 
 def string_contains(x, words):

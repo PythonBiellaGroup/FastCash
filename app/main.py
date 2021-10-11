@@ -1,11 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import APIKeyHeader
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from sqlmodel import select
+from fastapi import FastAPI, responses
+
+
+# from app.src.api.endpoints.login import api_token
 from app.src.common.security import get_password_hash
-
-
 from app.src.db.engine import get_session_sqlmodel
 from app.src.db.manager import create_table, insert_data
 from app.src.api.api import api_router
@@ -17,7 +17,6 @@ from app.src.config import (
     PROJECT_NAME,
     API_V1_STR,
     BACKEND_CORS_ORIGINS,
-    APP_API_TOKEN,
 )
 from app.src.config import (
     APP_USER_NAME,
@@ -29,12 +28,6 @@ from app.src.config import (
     APP_USER_ISADMIN,
 )
 from app.src.models.app_user import AppUser
-
-
-# async def api_token(token: str = Depends(APIKeyHeader(name="Token"))):
-#     if token != APP_API_TOKEN:
-#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-
 
 app = FastAPI(
     title=PROJECT_NAME,
@@ -82,8 +75,26 @@ def on_startup():
         logger.debug("Default user inserted")
 
 
+@app.get("/")
+def index():
+    url_swagger = f"http://{API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}/docs"
+    url_redoc = f"http://{API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}/redoc"
+    body = (
+        "<html>"
+        "<body style='padding: 10px;'>"
+        "<h1>Welcome to: PythonBiellaGroup FastCash Server App</h1>"
+        "<ul>"
+        f"<li><a href={url_swagger}>Link to the Swagger documentation</a></li>"
+        f"<li><a href={url_redoc}>Link to the Redoc documentation</a></li>"
+        "</ul>"
+        "</body>"
+        "</html>"
+    )
+    return responses.HTMLResponse(content=body)
+
+
 if __name__ == "__main__":
-    logger.debug(f"Starting server on: {API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}")
+    logger.info(f"Starting server on: {API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}")
 
     if DEBUG_MODE:
         uvicorn.run(app, port=API_ENDPOINT_PORT, host=API_ENDPOINT_HOST)

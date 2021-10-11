@@ -29,7 +29,7 @@ SECURITY_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
 
 # if you want to test gunicorn the below environment variabile must be False
 DEBUG_MODE: str = os.environ.get("DEBUG_MODE", "False")
-VERBOSITY: str = os.environ.get("VERBOSITY", "DEBUG")
+APP_VERBOSITY: str = os.environ.get("APP_VERBOSITY", "DEBUG")
 
 # Database settings
 DB_CONFIG = {

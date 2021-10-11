@@ -7,10 +7,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from app.src.config import SECURITY_ACCESS_TOKEN_EXPIRE_MINUTES, API_V1_STR
+from app.src.config import (
+    SECURITY_ACCESS_TOKEN_EXPIRE_MINUTES,
+    API_V1_STR,
+)
 from app.src.models.token import Token
 from app.src.models.app_user import AppUser, AppUserRead
-from app.src.db.engine import get_session, get_db, get_session_sqlmodel
+from app.src.db.engine import get_session
 from app.src.common.security import (
     get_current_user,
     create_access_token,
@@ -20,13 +23,12 @@ from app.src.common.security import (
 router = APIRouter()
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{API_V1_STR}/login/access-token")
-API_TOKEN = "test"
 
 
-# Api Token function test
+# Api Token function test (auth based on token)
 # async def api_token(token: str = Depends(APIKeyHeader(name="Token"))):
-#     if token != API_TOKEN:
-#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+#     if token != APP_API_TOKEN:
+#       raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 @router.get("/test")

@@ -80,7 +80,7 @@ async def read_all_users(
             status_code=400, detail="Token not valid or user not authenticated"
         )
     list_users = session.exec(select(AppUser).offset(offset).limit(limit)).all()
-    profiling_api("User:get:all", start_time)
+    profiling_api("User:get:all", start_time, current_user.username)
     return list_users
 
 
@@ -92,7 +92,11 @@ async def read_single_user(
     """
     Retrieve a single user by id
     """
-    profiling_api(f"User:get:by_id:{user_id}", user_time_obj["start_time"])
+    profiling_api(
+        f"User:get:by_id:{user_id}",
+        user_time_obj["start_time"],
+        user_time_obj["db_user"].username,
+    )
     return user_time_obj["db_user"]
 
 
@@ -100,6 +104,7 @@ async def read_single_user(
 async def create_new_user(
     user: AppUserCreate,
     session: Session = Depends(get_session),
+    current_user: AppUser = Depends(get_current_admin_user),
 ) -> Any:
     """
     Insert new user
@@ -107,14 +112,14 @@ async def create_new_user(
     # Check user existing by email and username
     start_time = dt.datetime.now()
     try:
-        #create the hash password
+        # create the hash password
         user.password = get_password_hash(user.password)
-        
-        #insert the new user
+
+        # insert the new user
         db_user = AppUser.from_orm(user)
         session.add(db_user)
         session.commit()
-        profiling_api("User:insert:single", start_time)
+        profiling_api("User:insert:single", start_time, current_user.username)
         return db_user
     except Exception as message:
         logger.error(f"Impossible to insert new user: {message}")
@@ -130,7 +135,6 @@ async def update_user_id(
     user: AppUserUpdate,
     session: Session = Depends(get_session),
     user_time_obj: AppUser = Depends(get_user_or_404_by_id),
-    current_user: AppUser = Depends(get_current_admin_user),
 ):
     """
     Update a user by id
@@ -143,7 +147,11 @@ async def update_user_id(
         session.add(existing_user)
         session.commit()
         session.refresh(existing_user)
-        profiling_api(f"User:delete:by_id:{user_id}", user_time_obj["start_time"])
+        profiling_api(
+            f"User:update:by_id:{user_id}",
+            user_time_obj["start_time"],
+            user_time_obj["db_user"].username,
+        )
         return existing_user
     except Exception as message:
         logger.error(
@@ -167,7 +175,11 @@ async def delete_user_id(
     try:
         session.delete(existing_user)
         session.commit()
-        profiling_api(f"User:delete:by_id:{user_id}", user_time_obj["start_time"])
+        profiling_api(
+            f"User:delete:by_id:{user_id}",
+            user_time_obj["start_time"],
+            user_time_obj["db_user"].username,
+        )
         return {"User deleted": True}
     except Exception as message:
         logger.error(f"Impossible to delete the user: {user_id}")

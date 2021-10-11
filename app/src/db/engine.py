@@ -16,7 +16,7 @@ def get_db():
             "app.src.models"
         )  # need to scan a folder and import classes and models
         engine = get_engine()
-        logger.info("Connected to PostgreSQL database!")
+        # logger.debug("Connected to PostgreSQL database!")
     except IOError:
         logger.exception("Failed to get database connection!")
         return None, "fail"

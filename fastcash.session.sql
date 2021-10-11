@@ -1,7 +1,9 @@
-drop table producttaglink cascade;
-drop table product cascade;
-drop table tag cascade;
-drop table producttype cascade;
+select * from appuser
+-- drop table producttaglink cascade;
+-- drop table product cascade;
+-- drop table tag cascade;
+-- drop table producttype cascade;
+-- drop table appuser cascade;
 -- select *
 -- from product;
 -- select *

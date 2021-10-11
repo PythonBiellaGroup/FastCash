@@ -16,7 +16,7 @@ from typing import Any, Optional, Union
 from passlib.context import CryptContext
 
 from app.src.db.manager import get_db
-from app.src.models.app_user import AppUser
+from app.src.models.app_user import AppUser, AppUserRead
 from app.src.models.token import TokenPayload
 
 from app.src.config import (
@@ -55,13 +55,13 @@ def get_current_user(*, token: str = Depends(reusable_oauth2)) -> AppUser:
 
 def get_current_admin_user(
     current_user: AppUser = Depends(get_current_user),
-) -> bool:
+) -> AppUserRead:
     if not current_user.isAdmin:
         raise HTTPException(status_code=400, detail="User is not admin or don't exist")
     if current_user:
-        return True
+        return current_user
     else:
-        return False
+        return None
 
 
 def test_user(current_user: AppUser = Depends(get_current_user)) -> bool:

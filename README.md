@@ -16,6 +16,8 @@ Then you have to initialize the project with: `poetry install`
 
 If you want to use the environment variable, you have to create a .env variable with this values inside:
 ```bash
+DB_PORT=<your_db_external_port>
+
 APP_DB_NAME=fastcash
 APP_DB_USER=root
 APP_DB_PASSWORD=<yourpassword>
@@ -23,13 +25,14 @@ APP_DB_PORT=<yourport>
 APP_DB_HOST="fastcash-db"
 
 APP_ENDPOINT_HOST="localhost"
-APP_API_ENDPOINT_PORT=8044
-APP_DOCKER_PORT=8044
+APP_DOCKER_PORT=<your_docker_app_external_port>
 APP_ENDPOINT_PORT=8044
-APP_SECRET_KEY=<yourappsecret>
+APP_SECRET_KEY=<your_app_secret>
 APP_DEBUG_MODE="False"
 APP_VERBOSITY="DEBUG"
+APP_API_TOKEN=<your_secret_app_api_token>
 
+#optional
 POSTGRES_DATA_DIR=<your_machine_data_folder>
 POSTGRES_BACKUP_DIR=<your_machine_backup_folder>
 ```
@@ -76,13 +79,14 @@ The content of the file is this one (paste inside the file).
         "type": "python",
         "request": "launch",
         "module": "uvicorn",
-        "args": ["app.main:app", "--reload", "--port", "8042"],
+        "args": ["app.main:app", "--reload", "--port", "8044"],
         "env": {
-            "PYTHONPATH": "${cwd}",
-            "API_ENDPOINT_PORT": "8042",
-            "VERBOSITY": "DEBUG"
+          "PYTHONPATH": "${cwd}",
+          "API_ENDPOINT_PORT": "8044",
+          "API_ENDPOINT_HOST": "localhost",
+          "APP_VERBOSITY": "DEBUG",
         }
-      }
+      },
     ]
   }
 
