@@ -51,7 +51,7 @@
 		"visualstudioexptteam.vscodeintellicode",
 		"redhat.vscode-yaml",
 		"ms-vscode-remote.vscode-remote-extensionpack"
-	]
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8000],
