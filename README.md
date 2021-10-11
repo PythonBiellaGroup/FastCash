@@ -182,6 +182,23 @@ Be carefull not to install virtualenv via `apt` on linux, but use virtualenv by 
 
 ### Useful commands
 If you want to restore docker on your machine:
-```
+```bash
 docker system prune --all
+```
+
+Open the port on your machine if you are developing remotely (in a VPS for example and in a Linux OS based):
+```bash
+# if you want to launch the mapping in detach mode
+ssh -f -N pbg
+
+# if you launch the mapping in attach mode inside your current bash window
+ssh -f pbg
+```
+
+With this command you have to set your <pbg> ssh config profile with the ports in the `~/.ssh/config` file.  
+For example:
+```bash
+# put this inside the config file
+LocalForward 8042 127.0.0.1:8042
+LocalForward 8000 127.0.0.1:8000
 ```

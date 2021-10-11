@@ -19,4 +19,21 @@ class AppUserBase(SQLModel):
 class AppUser(AppUserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    # order: Optional["Order"] = Relationship(back_populates="users")
+
+class AppUserCreate(AppUserBase):
+    pass
+
+
+class AppUserRead(AppUserBase):
+    id: int
+
+
+# Nel modello update tutti gli attributi devono essere opzionali
+class AppUserUpdate(AppUserBase):
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    birth_date: Optional[date] = None
+    username: Optional[str] = None
+    email: str
+    password: str
+    isAdmin: Optional[bool] = None
