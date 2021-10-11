@@ -13,6 +13,7 @@ from app.src.logger import logger
 from app.src.config import (
     API_ENDPOINT_HOST,
     API_ENDPOINT_PORT,
+    APP_DOCKER_PORT,
     DEBUG_MODE,
     PROJECT_NAME,
     API_V1_STR,
@@ -77,8 +78,8 @@ def on_startup():
 
 @app.get("/")
 def index():
-    url_swagger = f"http://{API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}/docs"
-    url_redoc = f"http://{API_ENDPOINT_HOST}:{API_ENDPOINT_PORT}/redoc"
+    url_swagger = f"http://{API_ENDPOINT_HOST}:{APP_DOCKER_PORT}/docs"
+    url_redoc = f"http://{API_ENDPOINT_HOST}:{APP_DOCKER_PORT}/redoc"
     body = (
         "<html>"
         "<body style='padding: 10px;'>"

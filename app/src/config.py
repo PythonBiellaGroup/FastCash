@@ -10,7 +10,8 @@ from pydantic import AnyHttpUrl
 
 
 # Set the application variables
-API_ENDPOINT_PORT: int = int(os.environ.get("API_ENDPOINT_PORT", 8042))
+API_ENDPOINT_PORT: int = int(os.environ.get("API_ENDPOINT_PORT", 8000))
+APP_DOCKER_PORT: int = int(os.environ.get("APP_DOCKER_PORT", 8042))
 API_ENDPOINT_HOST: str = os.environ.get("API_ENDPOINT_HOST", "127.0.0.1")
 APP_SECRET_KEY: str = os.environ.get("APP_SECRET_KEY", "DEVtest42!!")
 APP_API_TOKEN: str = os.environ.get("APP_API_TOKEN", "PythonBiellaGroup")
