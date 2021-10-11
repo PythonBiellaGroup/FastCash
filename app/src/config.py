@@ -49,7 +49,7 @@ config_path: str = os.path.join(APP_PATH, "app", "config")
 
 # DEFAULT ADMIN START USER
 APP_USER_USERNAME: str = os.getenv("APP_USER_USERNAME", "pbg")
-APP_USER_PASSWORD: str = os.getenv("APP_USER_PASSWORD", "superDuber456!!")
+APP_USER_PASSWORD: str = os.getenv("APP_USER_PASSWORD", "adminMEGA42!")
 APP_USER_NAME: str = os.getenv("APP_USER_NAME", "PythonBiellaGroup")
 APP_USER_SURNAME: str = os.getenv("APP_USER_SURNAME", "PythonBiellaGroup")
 APP_USER_EMAIL: str = os.getenv("APP_USER_EMAIL", "pythonbiellagroup@gmail.com")

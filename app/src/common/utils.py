@@ -4,8 +4,19 @@ import re
 import json
 import importlib
 import unidecode
+import datetime as dt
 
 from app.src.logger import logger
+
+
+# API Logging
+def profiling_api(name, start):
+    difference = dt.datetime.now() - start
+    seconds = difference.total_seconds()
+    milliseconds = seconds * 1000
+    logger.info(
+        name + " : " + str(seconds) + " seconds, " + str(milliseconds) + " milliseconds"
+    )
 
 
 def string_contains(x, words):

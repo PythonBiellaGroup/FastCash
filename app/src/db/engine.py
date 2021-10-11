@@ -54,3 +54,10 @@ def get_session() -> Generator:
     engine = get_db()
     with Session(engine) as session:
         yield session
+
+
+# get engine sqlmodel session
+def get_session_sqlmodel():
+    engine = get_db()
+    session = Session(engine)
+    return session

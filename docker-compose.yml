@@ -36,7 +36,7 @@ services:
       POSTGRES_USER: ${APP_DB_USER}
       POSTGRES_PASSWORD: ${APP_DB_PASSWORD}
     ports:
-      - "${APP_DB_PORT:-5442}:5432"
+      - "${DB_PORT:-5442}:5432"
     volumes:
       - "${POSTGRES_DATA_DIR:-/opt/fastcash/data/postgres}:/var/lib/postgresql/data"
       - "${POSTGRES_BACKUP_DIR:-/opt/fastcash/backup}:/project/backup"

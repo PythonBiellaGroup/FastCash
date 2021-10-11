@@ -10,10 +10,11 @@ from app.src.models.app_user import (
     AppUserCreate,
     AppUserUpdate,
 )
-from app.src.common.security import get_current_admin_user
+from app.src.common.security import get_current_admin_user, get_password_hash
 from app.src.db.engine import get_session
 from app.src.common.utils import profiling_api
 from app.src.logger import logger
+
 
 router = APIRouter()
 
@@ -49,29 +50,8 @@ async def get_user_or_404_by_email(
     start_time = dt.datetime.now()
     try:
         if current_user:
-            db_user = session.get(AppUser, user_email)
-            if db_user:
-                return {"db_user": db_user, "start_time": start_time}
-            else:
-                raise HTTPException(status_code=404, detail="User not found")
-        else:
-            raise HTTPException(
-                status_code=400, detail="Token not valid or user not authenticated"
-            )
-    except KeyError:
-        raise HTTPException(status_code=400, detail="Product not found")
-
-
-async def get_user_or_404_by_username(
-    *,
-    session: Session = Depends(get_session),
-    username: str = Path(..., ge=1),
-    current_user: AppUser = Depends(get_current_admin_user),
-):
-    start_time = dt.datetime.now()
-    try:
-        if current_user:
-            db_user = session.get(AppUser, username)
+            query = select(AppUser).where(AppUser.email == user_email)
+            db_user = session.exec(query).first()
             if db_user:
                 return {"db_user": db_user, "start_time": start_time}
             else:
@@ -127,6 +107,10 @@ async def create_new_user(
     # Check user existing by email and username
     start_time = dt.datetime.now()
     try:
+        #create the hash password
+        user.password = get_password_hash(user.password)
+        
+        #insert the new user
         db_user = AppUser.from_orm(user)
         session.add(db_user)
         session.commit()

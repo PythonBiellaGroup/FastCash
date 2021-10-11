@@ -2,7 +2,11 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import APIKeyHeader
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
+from sqlmodel import select
+from app.src.common.security import get_password_hash
 
+
+from app.src.db.engine import get_session_sqlmodel
 from app.src.db.manager import create_table, insert_data
 from app.src.api.api import api_router
 from app.src.logger import logger
@@ -27,15 +31,15 @@ from app.src.config import (
 from app.src.models.app_user import AppUser
 
 
-async def api_token(token: str = Depends(APIKeyHeader(name="Token"))):
-    if token != APP_API_TOKEN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+# async def api_token(token: str = Depends(APIKeyHeader(name="Token"))):
+#     if token != APP_API_TOKEN:
+#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 app = FastAPI(
     title=PROJECT_NAME,
     openapi_url=f"{API_V1_STR}/openapi.json",
-    dependencies=[Depends(api_token)],
+    # dependencies=[Depends(api_token)],
 )
 
 # Set all CORS enabled origins
@@ -62,12 +66,20 @@ def on_startup():
         birth_date=APP_USER_BIRTH_DATE,
         username=APP_USER_USERNAME,
         email=APP_USER_EMAIL,
-        password=APP_USER_PASSWORD,
+        password=get_password_hash(APP_USER_PASSWORD),
         isAdmin=APP_USER_ISADMIN,
     )
 
-    # create data
-    insert_data(admin_user)
+    # check if the user exist
+    session = get_session_sqlmodel()
+    query = select(AppUser).where(AppUser.username == admin_user.username)
+    check_user = session.exec(query).first()
+    if check_user:
+        logger.debug("Default user not inserted, user already exist...")
+    else:
+        # insert the admin user
+        insert_data(admin_user)
+        logger.debug("Default user inserted")
 
 
 if __name__ == "__main__":

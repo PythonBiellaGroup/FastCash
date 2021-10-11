@@ -2,5 +2,17 @@
     "python.pythonPath": "/Users/jeydi/Library/Caches/pypoetry/virtualenvs/fastcash-dnwhUra9-py3.8/bin/python",
     "python.linting.flake8Enabled": true,
     "python.linting.mypyEnabled": false,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5442,
+            "driver": "PostgreSQL",
+            "name": "FastCash Local",
+            "username": "root",
+            "database": "fastcash",
+            "password": "SUPERduper42"
+        }
+    ]
 }

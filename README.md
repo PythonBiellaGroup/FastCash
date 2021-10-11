@@ -190,9 +190,6 @@ Open the port on your machine if you are developing remotely (in a VPS for examp
 ```bash
 # if you want to launch the mapping in detach mode
 ssh -f -N pbg
-
-# if you launch the mapping in attach mode inside your current bash window
-ssh -f pbg
 ```
 
 With this command you have to set your <pbg> ssh config profile with the ports in the `~/.ssh/config` file.  

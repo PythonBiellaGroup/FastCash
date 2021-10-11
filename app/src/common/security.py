@@ -104,7 +104,7 @@ def verify_user_by_username(
     user = db.query(AppUser).filter(AppUser.username == username).first()
     if not user:
         return None
-    if not verify_password(password, user.token):
+    if not verify_password(password, user.password):
         return None
     return user
 
