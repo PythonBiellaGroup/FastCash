@@ -11,7 +11,7 @@ from app.src.models.app_user import (
     AppUserUpdate,
 )
 from app.src.common.security import get_current_admin_user
-from app.src.db.manager import get_session
+from app.src.db.engine import get_session
 from app.src.common.utils import profiling_api
 from app.src.logger import logger
 

@@ -1,7 +1,7 @@
 # database manager functions to interact with database
 from sqlmodel.main import SQLModel
 
-from app.src.db.engine import get_db
+from app.src.db.engine import get_db, get_session
 from app.src.logger import logger
 
 
@@ -48,17 +48,14 @@ def check_table():
 
 # insert new table with data
 def insert_data(your_object: object) -> bool:
-    # Database Engine
-    db_engine = get_db()
-    logger.debug(f"Creating new table: {logger}")
     try:
-        with Session(db_engine) as session:
-            session.add(your_object)
-            session.commit()
+        session = get_session()
+        session.add(your_object)
+        session.commit()
         return True
     except Exception as message:
         logger.error(
-            "Impossible to create the table for the object: {your_object.__class__.__name__}"
+            "Impossible to create the table for the object"
         )
         logger.exception(message)
         raise Exception(message)
@@ -66,10 +63,10 @@ def insert_data(your_object: object) -> bool:
 
 # refresh the schema and data
 def refresh_data(your_object: object) -> bool:
-    db_engine = get_db()
+    
     try:
-        with Session(db_engine) as session:
-            session.refresh(your_object)
+        session = get_session()
+        session.refresh(your_object)
         return True
     except Exception as message:
         logger.error(
